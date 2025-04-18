@@ -28,7 +28,7 @@ resource "aws_db_instance" "taskoverflow_database" {
     engine = "postgres"
     engine_version = "17"
     instance_class = "db.t3.micro"
-    db_name = "coughoverflow"
+    db_name = "todo"
     username = local.database_username
     password = local.database_password
     parameter_group_name = "default.postgres17"
@@ -98,12 +98,12 @@ resource "aws_ecs_task_definition" "taskoverflow" {
         "image": "${local.image}",
         "cpu": 1024,
         "memory": 2048,
-        "name": "coughoverflow",
+        "name": "todo",
         "networkMode": "awsvpc",
         "portMappings": [
         {
-            "containerPort": 8080,
-            "hostPort": 8080
+            "containerPort": 6400,
+            "hostPort": 6400
         }
         ],
         "environment": [
@@ -115,7 +115,7 @@ resource "aws_ecs_task_definition" "taskoverflow" {
     "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-            "awslogs-group": "/coughoverflow/api",
+            "awslogs-group": "/taskoverflow/todo",
             "awslogs-region": "us-east-1",
             "awslogs-stream-prefix": "ecs",
             "awslogs-create-group": "true"
@@ -145,8 +145,8 @@ resource "aws_security_group" "taskoverflow" {
     description = "TaskOverflow Security Group"
 
     ingress {
-        from_port = 8080
-        to_port = 8080
+        from_port = 6400
+        to_port = 6400
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
